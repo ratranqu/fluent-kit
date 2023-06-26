@@ -2,8 +2,8 @@ import NIOCore
 import SQLKit
 
 extension Database {
-    public func `enum`(_ name: String) -> EnumBuilder {
-        .init(database: self, name: name)
+    public func `enum`(_ name: String, space: String? = nil) -> EnumBuilder {
+        .init(database: self, name: name, space: space)
     }
 }
 
@@ -11,9 +11,9 @@ public final class EnumBuilder {
     let database: Database
     public var `enum`: DatabaseEnum
 
-    init(database: Database, name: String) {
+    init(database: Database, name: String, space: String?) {
         self.database = database
-        self.enum = .init(name: name)
+        self.enum = .init(name: name, space: space)
     }
 
     public func `case`(_ name: String) -> Self {
@@ -63,6 +63,7 @@ public final class EnumBuilder {
             // Convert latest cases to usable DataType.
             .enum(.init(
                 name: self.enum.name,
+                space: self.enum.space,
                 cases: cases.map { $0.case }
             ))
         }

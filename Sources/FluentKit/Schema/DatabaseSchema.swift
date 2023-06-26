@@ -30,10 +30,12 @@ public struct DatabaseSchema {
         
         public struct Enum {
             public var name: String
+            public var space: String?
             public var cases: [String]
 
-            public init(name: String, cases: [String]) {
+            public init(name: String, space: String?,  cases: [String]) {
                 self.name = name
+                self.space = space
                 self.cases = cases
             }
         }

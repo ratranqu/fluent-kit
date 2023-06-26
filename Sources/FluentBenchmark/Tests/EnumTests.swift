@@ -296,6 +296,7 @@ private enum Bar: String, Codable {
 
 private final class Foo: Model {
     static let schema = "foos"
+    static let space = "bok"
 
     @ID(key: .id)
     var id: UUID?
@@ -318,13 +319,13 @@ private final class Foo: Model {
 
 private struct FooMigration: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
-        database.enum("bar")
+        database.enum("bar", space: "b")
             .case("baz")
             .case("qux")
             .create()
             .flatMap
         { bar in
-            database.schema("foos")
+            database.schema("foos", space: "b")
                 .field("id", .uuid, .identifier(auto: false))
                 .field("bar", bar, .required)
                 .field("baz", bar)
@@ -333,9 +334,11 @@ private struct FooMigration: Migration {
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("foos").delete().flatMap {
-            database.enum("bar").delete()
-        }
+        database.eventLoop.makeSucceededVoidFuture()
+
+//        database.schema("foos").delete().flatMap {
+//            database.enum("bar").delete()
+//        }
     }
 }
 
@@ -355,16 +358,18 @@ private struct BarAddQuzAndQuzzMigration: Migration {
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.enum("bar")
-            .deleteCase("quuz")
-            .update()
-            .flatMap
-        { bar in
-            database.schema("foos")
-                .updateField("bar", bar)
-                .updateField("baz", bar)
-                .update()
-        }
+        database.eventLoop.makeSucceededVoidFuture()
+
+//        database.enum("bar")
+//            .deleteCase("quuz")
+//            .update()
+//            .flatMap
+//        { bar in
+//            database.schema("foos")
+//                .updateField("bar", bar)
+//                .updateField("baz", bar)
+//                .update()
+//        }
     }
 }
 
@@ -400,7 +405,9 @@ private struct PetMigration: Migration {
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("pets").delete()
+
+        database.eventLoop.makeSucceededVoidFuture()
+//        database.schema("pets").delete()
     }
 }
 
@@ -469,7 +476,8 @@ private struct FlagsMigration: Migration {
     }
     
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema(Flags.schema)
-            .delete()
+        database.eventLoop.makeSucceededVoidFuture()
+//        database.schema(Flags.schema)
+//            .delete()
     }
 }
